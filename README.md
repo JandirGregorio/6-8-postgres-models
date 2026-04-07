@@ -7,6 +7,9 @@ This repo demonstrates the **model swap**: swapping an in-memory `Pet` model for
 ## Setup
 
 ```sh
+# cd into server
+cd server
+
 # Install dependencies
 npm install
 
@@ -18,21 +21,24 @@ createdb pets_db            # Mac
 # sudo -u postgres createdb pets_db   # Windows/WSL
 
 # Initialize the schema
-npm run db:init
+psql -f db/seed.sql                    # Mac
+sudo -u postgres psql -f db/seed.sql   # Windows/WSL
 
 # Start the server
-npm start
+npm run dev
 ```
 
 ## Files
 
-- `server.js` — Express app setup
+- `index.js` — Express app setup
 - `db/pool.js` — connection pool
-- `db/init.js` — creates tables (`npm run db:init`)
+- `db/seed.sql` — creates tables
 - `models/petModel-memory.js` — the in-memory Pet model (before the swap)
 - `models/petModel.js` — the Postgres Pet model (after the swap)
+- `models/ownerModel-memory.js` — the in-memory Owner model (before the swap)
+- `models/ownerModel.js` — the Postgres Owner model (TODO)
 - `controllers/petControllers.js` — controllers (unchanged between both models)
-- `routes/petRouter.js` — routes (unchanged between both models)
+- `controllers/ownerControllers.js` — controllers (unchanged between both models)
 
 ## The Swap
 
