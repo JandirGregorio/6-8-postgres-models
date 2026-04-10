@@ -1,26 +1,15 @@
-\c pets_db
+\c users_db
 
-DROP TABLE IF EXISTS pets;
-DROP TABLE IF EXISTS owners;
+DROP TABLE IF EXISTS users;
 
-CREATE TABLE owners (
-  owner_id SERIAL PRIMARY KEY,
-  name     TEXT NOT NULL,
-  email    TEXT NOT NULL UNIQUE
+-- WARNING: storing passwords in plaintext is insecure.
+-- Lesson 9 fixes this by hashing passwords with bcrypt.
+CREATE TABLE users (
+  user_id  SERIAL PRIMARY KEY,
+  username TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL
 );
 
-CREATE TABLE pets (
-  pet_id  SERIAL PRIMARY KEY,
-  name    TEXT NOT NULL,
-  species TEXT NOT NULL
-);
-
-INSERT INTO owners (name, email) VALUES
-  ('Ann Duong',    'ann@example.com'),
-  ('Ben Spector',  'ben@example.com'),
-  ('Carmen Lopez', 'carmen@example.com');
-
-INSERT INTO pets (name, species) VALUES
-  ('Khalo',  'dog'),
-  ('Pascal', 'cat'),
-  ('Ono',    'bird');
+INSERT INTO users (username, password) VALUES
+  ('alice', 'password123'),
+  ('bob',   'hunter2');

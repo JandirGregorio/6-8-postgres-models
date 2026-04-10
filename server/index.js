@@ -1,40 +1,35 @@
 const express = require('express');
-const {
-  getAllPets,
-  getPet,
-  createPet,
-  updatePet,
-  deletePet,
-} = require('./controllers/petControllers');
-const {
-  getAllOwners,
-  getOwner,
-  createOwner,
-  updateOwner,
-  deleteOwner,
-} = require('./controllers/ownerControllers');
+const { register, login } = require('./controllers/authControllers');
+const { listUsers, updateUser, deleteUser } = require('./controllers/userControllers');
 const logRoutes = require('./middleware/logRoutes');
 
 const app = express();
 app.use(express.json());
 app.use(logRoutes);
 
-app.get('/api/pets/', getAllPets);
-app.get('/api/pets/:pet_id', getPet);
-app.post('/api/pets/', createPet);
-app.patch('/api/pets/:pet_id', updatePet);
-app.delete('/api/pets/:pet_id', deletePet);
+// ====================================
+// Auth routes
+// ====================================
 
-app.get('/api/owners/', getAllOwners);
-app.get('/api/owners/:owner_id', getOwner);
-app.post('/api/owners/', createOwner);
-app.patch('/api/owners/:owner_id', updateOwner);
-app.delete('/api/owners/:owner_id', deleteOwner);
+app.post('/api/auth/register', register);
+app.post('/api/auth/login', login);
+
+// ====================================
+// User routes
+// ====================================
+
+app.get('/api/users', listUsers);
+app.patch('/api/users/:user_id', updateUser);
+app.delete('/api/users/:user_id', deleteUser);
+
+// ====================================
+// Error handling
+// ====================================
 
 // Error-handling middleware — must have exactly four parameters
 const handleError = (err, req, res, next) => {
   console.error(err);
-  res.status(500).send({ message: `Internal Server Error` });
+  res.status(500).send({ message: 'Internal Server Error' });
 };
 
 app.use(handleError);

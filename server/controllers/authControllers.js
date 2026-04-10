@@ -1,0 +1,42 @@
+const userModel = require('../models/userModel-in-memory');
+
+const register = async (req, res, next) => {
+  try {
+    // 1. Pull the username and password out of the request body
+    const { username, password } = req.body;
+
+    // 2. Store the new user in the database
+    //    The model returns only user_id and username — never the password
+    const user = await userModel.create(username, password);
+
+    // 3. Respond with the new user and a 201 Created status
+    res.status(201).send(user);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const login = async (req, res, next) => {
+  try {
+    // 1. Pull the username and password out of the request body
+    const { username, password } = req.body;
+
+    // 2. Look up the user by username
+    //    findByUsername returns the full user row including password
+    const user = await userModel.findByUsername(username);
+
+    // 3. If no user was found, or the password doesn't match, reject the request
+    //    We return the same generic message for both cases so an attacker
+    //    can't tell whether the username or password was wrong
+    if (!user || user.password !== password) {
+      return res.status(401).send({ message: 'Invalid credentials' });
+    }
+
+    // 4. Credentials are valid — respond with user_id and username only
+    res.send({ user_id: user.user_id, username: user.username });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { register, login };

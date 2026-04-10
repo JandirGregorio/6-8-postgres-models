@@ -1,0 +1,42 @@
+// models/userModel-solution.js
+// Postgres-backed User model — same interface as userModel-in-memory.js.
+// Controllers and routes are unchanged between the two versions.
+
+const pool = require('../db/pool');
+
+// Returns all users — never exposes password
+module.exports.list = async () => {
+  const { rows } = await pool.query('SELECT user_id, username FROM users ORDER BY user_id');
+  return rows;
+};
+
+// Stores the user and returns user_id and username — never exposes password
+module.exports.create = async (username, password) => {
+  const query = 'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING user_id, username';
+  const { rows } = await pool.query(query, [username, password]);
+  return rows[0];
+};
+
+// Returns the full user object including password — used only for login comparison
+// Returns null if not found
+module.exports.findByUsername = async (username) => {
+  const query = 'SELECT * FROM users WHERE username = $1';
+  const { rows } = await pool.query(query, [username]);
+  return rows[0] || null;
+};
+
+// Updates the user's password and returns user_id and username — never exposes password
+// Returns null if not found
+module.exports.update = async (user_id, password) => {
+  const query = 'UPDATE users SET password = $1 WHERE user_id = $2 RETURNING user_id, username';
+  const { rows } = await pool.query(query, [password, user_id]);
+  return rows[0] || null;
+};
+
+// Deletes the user and returns user_id and username
+// Returns null if not found
+module.exports.destroy = async (user_id) => {
+  const query = 'DELETE FROM users WHERE user_id = $1 RETURNING user_id, username';
+  const { rows } = await pool.query(query, [user_id]);
+  return rows[0] || null;
+};
